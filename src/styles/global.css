@@ -1,0 +1,80 @@
+:root {
+  /* Soft Pastel Blue Theme */
+  --color-primary: #82b1ff;
+  --color-primary-light: #e3f2fd;
+  --color-primary-dark: #448aff;
+  --color-accent: #ffb6c1; /* Soft pink for a hint of warmth */
+  
+  --color-bg-base: #f0f7ff;
+  --color-bg-card: rgba(255, 255, 255, 0.7); /* Glassmorphism base */
+  
+  --color-text-main: #1e293b;
+  --color-text-muted: #64748b;
+  
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  
+  --shadow-soft: 0 10px 40px -10px rgba(0, 50, 100, 0.05);
+  --shadow-hover: 0 20px 40px -10px rgba(0, 50, 100, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f7ff 100%);
+  color: var(--color-text-main);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: 0.5rem;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+/* Scrollbar styling for a rich feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
