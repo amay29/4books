@@ -1,0 +1,131 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.title {
+  color: var(--color-primary-dark);
+  font-size: 2rem;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+}
+
+.formCard {
+  background: var(--color-bg-card);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputGroupRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.inputField {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(130, 177, 255, 0.3);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.inputField:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(130, 177, 255, 0.2);
+}
+
+.addButton {
+  background: var(--color-primary-dark);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  align-self: flex-end;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(68, 138, 255, 0.3);
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  background: #2979ff;
+  box-shadow: 0 6px 20px rgba(68, 138, 255, 0.4);
+}
+
+.vocabGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.vocabItem {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+}
+
+.wordHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.word {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.ipa {
+  color: var(--color-text-muted);
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.definition {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.synonym {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.sentence {
+  font-style: italic;
+  padding-left: 1rem;
+  border-left: 3px solid var(--color-primary-light);
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.deleteBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #cbd5e1;
+  transition: color 0.2s;
+}
+
+.deleteBtn:hover {
+  color: #ef4444;
+}
