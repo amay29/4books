@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from './components/Layout';
 import Journal from './pages/Journal';
 import Vocab from './pages/Vocab';
-// import Ielts from './pages/IeltsPractice';
+import Ielts from './pages/IeltsPractice';
 // import ErrorLog from './pages/ErrorLog';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
       case 'vocab':
         return <Vocab />;
       case 'ielts':
-        return <div>Buku 3: IELTS (Coming Soon)</div>;
+        return <Ielts />;
       case 'error':
         return <div>Buku 4: Error Log (Coming Soon)</div>;
       default:
