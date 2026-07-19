@@ -3,7 +3,7 @@ import Layout from './components/Layout';
 import Journal from './pages/Journal';
 import Vocab from './pages/Vocab';
 import Ielts from './pages/IeltsPractice';
-// import ErrorLog from './pages/ErrorLog';
+import ErrorLog from './pages/ErrorLog';
 
 function App() {
   const [activeTab, setActiveTab] = useState('journal');
@@ -17,7 +17,7 @@ function App() {
       case 'ielts':
         return <Ielts />;
       case 'error':
-        return <div>Buku 4: Error Log (Coming Soon)</div>;
+        return <ErrorLog />;
       default:
         return <Journal />;
     }
