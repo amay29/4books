@@ -7,8 +7,19 @@ const ErrorLog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingId, setEditingId] = useState(null);
   
-  const [formData, setFormData] = useState({ mistake: '', correction: '' });
+  const [formData, setFormData] = useState(() => {
+    try {
+      const draft = localStorage.getItem('4books_error_draft');
+      return draft ? JSON.parse(draft) : { mistake: '', correction: '' };
+    } catch {
+      return { mistake: '', correction: '' };
+    }
+  });
   const [editFormData, setEditFormData] = useState({});
+
+  useEffect(() => {
+    localStorage.setItem('4books_error_draft', JSON.stringify(formData));
+  }, [formData]);
 
   useEffect(() => {
     try {
@@ -40,6 +51,7 @@ const ErrorLog = () => {
     
     saveLogs([newLog, ...logs]);
     setFormData({ mistake: '', correction: '' });
+    localStorage.removeItem('4books_error_draft');
   };
 
   const handleDelete = (id) => {

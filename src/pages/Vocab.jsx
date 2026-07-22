@@ -7,15 +7,32 @@ const Vocab = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingId, setEditingId] = useState(null);
   
-  const [formData, setFormData] = useState({
-    word: '',
-    ipa: '',
-    definition: '',
-    synonym: '',
-    sentence: ''
+  const [formData, setFormData] = useState(() => {
+    try {
+      const draft = localStorage.getItem('4books_vocab_draft');
+      return draft ? JSON.parse(draft) : {
+        word: '',
+        ipa: '',
+        definition: '',
+        synonym: '',
+        sentence: ''
+      };
+    } catch {
+      return {
+        word: '',
+        ipa: '',
+        definition: '',
+        synonym: '',
+        sentence: ''
+      };
+    }
   });
   
   const [editFormData, setEditFormData] = useState({});
+
+  useEffect(() => {
+    localStorage.setItem('4books_vocab_draft', JSON.stringify(formData));
+  }, [formData]);
 
   useEffect(() => {
     try {
@@ -53,6 +70,7 @@ const Vocab = () => {
     
     saveVocabs([newVocab, ...vocabs]);
     setFormData({ word: '', ipa: '', definition: '', synonym: '', sentence: '' });
+    localStorage.removeItem('4books_vocab_draft');
   };
 
   const handleDelete = (id, word) => {
