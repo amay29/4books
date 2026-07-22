@@ -131,6 +131,7 @@
 
 .definition {
   font-weight: 500;
+  white-space: pre-wrap;
 }
 
 .synonym {
@@ -145,6 +146,7 @@
   color: #334155;
   font-size: 0.95rem;
   margin-top: 0.5rem;
+  white-space: pre-wrap;
 }
 
 .cardActions {

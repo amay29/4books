@@ -135,6 +135,7 @@
   font-size: 1.05rem;
   line-height: 1.6;
   border-left: 4px solid #ef4444;
+  white-space: pre-wrap;
 }
 
 .correctionText {
@@ -145,6 +146,7 @@
   font-size: 1.05rem;
   line-height: 1.6;
   border-left: 4px solid #10b981;
+  white-space: pre-wrap;
 }
 
 .date {
