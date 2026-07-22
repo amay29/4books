@@ -3,23 +3,39 @@
   --color-primary: #82b1ff;
   --color-primary-light: #e3f2fd;
   --color-primary-dark: #448aff;
-  --color-accent: #ffb6c1; /* Soft pink for a hint of warmth */
+  --color-primary-hover: #2979ff;
   
   --color-bg-base: #f0f7ff;
   --color-bg-card: rgba(255, 255, 255, 0.7); /* Glassmorphism base */
   
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-error: #ef4444;
+  --color-error-bg: #fef2f2;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  
+  /* Text Colors */
   --color-text-main: #1e293b;
   --color-text-muted: #64748b;
+  --color-text-light: #94a3b8;
+  --color-border: rgba(130, 177, 255, 0.3);
   
+  /* Typography */
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
   
+  /* Geometry */
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
   
+  /* Shadows */
   --shadow-soft: 0 10px 40px -10px rgba(0, 50, 100, 0.05);
   --shadow-hover: 0 20px 40px -10px rgba(0, 50, 100, 0.1);
+  --shadow-btn: 0 4px 15px rgba(68, 138, 255, 0.3);
+  --shadow-btn-hover: 0 6px 20px rgba(68, 138, 255, 0.4);
 }
 
 * {

@@ -22,6 +22,51 @@
   font-size: 0.95rem;
 }
 
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--color-bg-card);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.dateLabel {
+  font-weight: 600;
+  min-width: 120px;
+  text-align: center;
+  color: var(--color-text-main);
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition: all 0.2s;
+}
+
+.navButton:hover:not(:disabled) {
+  background: rgba(130, 177, 255, 0.2);
+  color: var(--color-primary-dark);
+}
+
+.navButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 .stats {
   display: flex;
   align-items: center;
@@ -69,7 +114,14 @@
 .footer {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin-top: 1rem;
+  gap: 1rem;
+}
+
+.saveStatus {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
 
 .saveButton {

@@ -1,32 +1,85 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Card from '../components/Card';
-import { Timer, Play, Square } from 'lucide-react';
+import { Timer, Play, Square, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import styles from './IeltsPractice.module.css';
 
+const DEFAULT_TIME = 40 * 60;
+
 const IeltsPractice = () => {
+  const [sessions, setSessions] = useState([]);
+  const [currentSessionIndex, setCurrentSessionIndex] = useState(0);
+  
   const [prompt, setPrompt] = useState('');
   const [answer, setAnswer] = useState('');
-  
-  // Timer states
-  const [timeLeft, setTimeLeft] = useState(40 * 60); // 40 minutes default
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_TIME);
   const [isActive, setIsActive] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
+  
   const timerRef = useRef(null);
-
+  
+  // Load initial data
   useEffect(() => {
-    const savedPrompt = localStorage.getItem('4books_ielts_prompt');
-    const savedAnswer = localStorage.getItem('4books_ielts_answer');
-    if (savedPrompt) setPrompt(savedPrompt);
-    if (savedAnswer) setAnswer(savedAnswer);
+    try {
+      const savedSessionsStr = localStorage.getItem('4books_ielts_sessions');
+      let loadedSessions = [];
+      
+      if (savedSessionsStr) {
+        loadedSessions = JSON.parse(savedSessionsStr);
+      } else {
+        // Migration from old single-entry format
+        const oldPrompt = localStorage.getItem('4books_ielts_prompt');
+        const oldAnswer = localStorage.getItem('4books_ielts_answer');
+        if (oldPrompt || oldAnswer) {
+          loadedSessions = [{
+            id: Date.now(),
+            date: new Date().toISOString(),
+            prompt: oldPrompt || '',
+            answer: oldAnswer || '',
+            timeLeft: DEFAULT_TIME
+          }];
+        }
+      }
+      
+      if (loadedSessions.length === 0) {
+        loadedSessions = [{
+          id: Date.now(),
+          date: new Date().toISOString(),
+          prompt: '',
+          answer: '',
+          timeLeft: DEFAULT_TIME
+        }];
+      }
+      
+      setSessions(loadedSessions);
+      setCurrentSessionIndex(0);
+      setIsLoaded(true);
+    } catch (e) {
+      console.error("Failed to parse IELTS sessions", e);
+      setSessions([{
+        id: Date.now(),
+        date: new Date().toISOString(),
+        prompt: '',
+        answer: '',
+        timeLeft: DEFAULT_TIME
+      }]);
+      setCurrentSessionIndex(0);
+      setIsLoaded(true);
+    }
   }, []);
 
+  // Update local state when session index changes
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      localStorage.setItem('4books_ielts_prompt', prompt);
-      localStorage.setItem('4books_ielts_answer', answer);
-    }, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [prompt, answer]);
+    if (sessions.length > 0 && isLoaded) {
+      const current = sessions[currentSessionIndex];
+      setPrompt(current.prompt || '');
+      setAnswer(current.answer || '');
+      setTimeLeft(current.timeLeft ?? DEFAULT_TIME);
+      setIsActive(false); // Pause timer on session switch
+    }
+  }, [currentSessionIndex, sessions, isLoaded]);
 
+  // Persist timer running state in background if tab is left open
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       timerRef.current = setInterval(() => {
@@ -39,11 +92,47 @@ const IeltsPractice = () => {
     return () => clearInterval(timerRef.current);
   }, [isActive, timeLeft]);
 
+  // Debounced Auto-save current session
+  useEffect(() => {
+    if (!isLoaded || sessions.length === 0) return;
+    
+    setSaveStatus('Saving...');
+    const timeoutId = setTimeout(() => {
+      const updatedSessions = [...sessions];
+      updatedSessions[currentSessionIndex] = {
+        ...updatedSessions[currentSessionIndex],
+        prompt,
+        answer,
+        timeLeft
+      };
+      setSessions(updatedSessions);
+      localStorage.setItem('4books_ielts_sessions', JSON.stringify(updatedSessions));
+      setSaveStatus('Saved');
+      setTimeout(() => setSaveStatus(''), 2000);
+    }, 1000);
+    
+    return () => clearTimeout(timeoutId);
+  }, [prompt, answer, timeLeft, isLoaded]); // Omitting currentSessionIndex & sessions intentionally to avoid loop
+
   const toggleTimer = () => setIsActive(!isActive);
   
   const resetTimer = () => {
     setIsActive(false);
-    setTimeLeft(40 * 60);
+    setTimeLeft(DEFAULT_TIME);
+  };
+
+  const createNewSession = () => {
+    const newSession = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      prompt: '',
+      answer: '',
+      timeLeft: DEFAULT_TIME
+    };
+    const updatedSessions = [newSession, ...sessions];
+    setSessions(updatedSessions);
+    setCurrentSessionIndex(0);
+    localStorage.setItem('4books_ielts_sessions', JSON.stringify(updatedSessions));
   };
 
   const formatTime = (seconds) => {
@@ -56,26 +145,59 @@ const IeltsPractice = () => {
     const words = answer.trim().split(/\s+/);
     return answer.trim() === '' ? 0 : words.length;
   }, [answer]);
+  
+  const currentSessionDate = sessions[currentSessionIndex]?.date 
+    ? new Date(sessions[currentSessionIndex].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
 
   return (
     <div className={`${styles.container} animate-slide-up`}>
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>IELTS Writing Practice</h1>
-          <p className={styles.subtitle}>Fokus simulasi Task 1 atau Task 2 dengan timer.</p>
+          <p className={styles.subtitle}>Focus on Task 1 or Task 2 simulation with a timer.</p>
         </div>
-        <div className={`${styles.timer} ${timeLeft < 300 ? styles.warning : ''}`}>
-          <Timer size={20} />
-          <span>{formatTime(timeLeft)}</span>
+        <div className={styles.headerRight}>
+          <div className={styles.sessionNav}>
+            <button 
+              className={styles.navButton} 
+              onClick={() => setCurrentSessionIndex(prev => Math.min(sessions.length - 1, prev + 1))} 
+              disabled={currentSessionIndex === sessions.length - 1}
+              aria-label="Previous session"
+              title="Previous session"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <span className={styles.sessionLabel}>
+              {currentSessionIndex === 0 ? 'Current Session' : currentSessionDate}
+            </span>
+            <button 
+              className={styles.navButton} 
+              onClick={() => setCurrentSessionIndex(prev => Math.max(0, prev - 1))} 
+              disabled={currentSessionIndex === 0}
+              aria-label="Next session"
+              title="Next session"
+            >
+              <ChevronRight size={20} />
+            </button>
+            <button className={styles.newSessionBtn} onClick={createNewSession} title="Start new session">
+              <Plus size={16} /> New
+            </button>
+          </div>
+          
+          <div className={`${styles.timer} ${timeLeft < 300 ? styles.warning : ''}`}>
+            <Timer size={20} />
+            <span>{formatTime(timeLeft)}</span>
+          </div>
         </div>
       </div>
 
       <div className={styles.splitView}>
         <Card className={styles.promptCard}>
-          <div className={styles.promptLabel}>Soal / Prompt</div>
+          <div className={styles.promptLabel}>Prompt / Question</div>
           <textarea
             className={styles.promptTextarea}
-            placeholder="Ketik soal IELTS di sini..."
+            placeholder="Type your IELTS prompt here..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
@@ -84,24 +206,29 @@ const IeltsPractice = () => {
         <Card className={styles.answerCard}>
           <textarea
             className={styles.answerTextarea}
-            placeholder="Mulai menulis jawabanmu di sini..."
+            placeholder="Start writing your answer here..."
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
           />
           <div className={styles.footer}>
             <div className={styles.wordCount}>
-              Word count: {wordCount} (Target: {prompt.toLowerCase().includes('task 1') ? '150+' : '250+'})
+              Words: {wordCount} (Target: {prompt.toLowerCase().includes('task 1') ? '150+' : '250+'})
             </div>
             <div className={styles.controls}>
+              <span className={styles.saveStatus}>{saveStatus}</span>
               <button className={styles.timerBtn} onClick={toggleTimer}>
-                {isActive ? <><Square size={16} style={{display:'inline', marginRight:'5px'}}/> Pause</> : <><Play size={16} style={{display:'inline', marginRight:'5px'}}/> Start Timer</>}
+                {isActive ? <><Square size={16} /> Pause</> : <><Play size={16} /> Start Timer</>}
               </button>
               <button className={styles.timerBtn} onClick={resetTimer}>Reset</button>
               <button 
                 className={styles.saveButton}
                 onClick={() => {
-                  localStorage.setItem('4books_ielts_prompt', prompt);
-                  localStorage.setItem('4books_ielts_answer', answer);
+                  const updatedSessions = [...sessions];
+                  updatedSessions[currentSessionIndex] = { ...updatedSessions[currentSessionIndex], prompt, answer, timeLeft };
+                  setSessions(updatedSessions);
+                  localStorage.setItem('4books_ielts_sessions', JSON.stringify(updatedSessions));
+                  setSaveStatus('Saved');
+                  setTimeout(() => setSaveStatus(''), 2000);
                 }}
               >
                 Save

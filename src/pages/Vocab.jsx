@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Search, Edit2, Check } from 'lucide-react';
 import styles from './Vocab.module.css';
 
 const Vocab = () => {
   const [vocabs, setVocabs] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  
   const [formData, setFormData] = useState({
     word: '',
     ipa: '',
@@ -11,11 +14,18 @@ const Vocab = () => {
     synonym: '',
     sentence: ''
   });
+  
+  const [editFormData, setEditFormData] = useState({});
 
   useEffect(() => {
-    const saved = localStorage.getItem('4books_vocab');
-    if (saved) {
-      setVocabs(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem('4books_vocab');
+      if (saved) {
+        setVocabs(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error("Failed to parse vocab data", e);
+      setVocabs([]);
     }
   }, []);
 
@@ -27,30 +37,67 @@ const Vocab = () => {
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  
+  const handleEditChange = (e) => {
+    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+  };
 
   const handleAdd = (e) => {
     e.preventDefault();
-    if (!formData.word.trim()) return;
+    if (!formData.word.trim() || !formData.definition.trim()) return;
 
     const newVocab = {
       ...formData,
-      id: Date.now()
+      id: Date.now() + Math.random().toString(36).substring(2, 9)
     };
     
     saveVocabs([newVocab, ...vocabs]);
     setFormData({ word: '', ipa: '', definition: '', synonym: '', sentence: '' });
   };
 
-  const handleDelete = (id) => {
-    const newVocabs = vocabs.filter(v => v.id !== id);
-    saveVocabs(newVocabs);
+  const handleDelete = (id, word) => {
+    if (window.confirm(`Are you sure you want to delete "${word}"?`)) {
+      const newVocabs = vocabs.filter(v => v.id !== id);
+      saveVocabs(newVocabs);
+    }
   };
+  
+  const startEditing = (vocab) => {
+    setEditingId(vocab.id);
+    setEditFormData({ ...vocab });
+  };
+  
+  const saveEditing = () => {
+    if (!editFormData.word.trim() || !editFormData.definition.trim()) return;
+    
+    const newVocabs = vocabs.map(v => 
+      v.id === editingId ? { ...editFormData } : v
+    );
+    saveVocabs(newVocabs);
+    setEditingId(null);
+  };
+
+  const filteredVocabs = vocabs.filter(v => 
+    v.word.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    v.definition.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className={`${styles.container} animate-slide-up`}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Vocabulary Ledger</h1>
-        <p className={styles.subtitle}>Catat kosakata baru, pelafalan, dan aplikasinya.</p>
+        <div>
+          <h1 className={styles.title}>Vocabulary Ledger</h1>
+          <p className={styles.subtitle}>Record new words, pronunciation, and usage.</p>
+        </div>
+        <div className={styles.headerActions}>
+          <input 
+            type="text" 
+            placeholder="Search vocab..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchBar}
+          />
+        </div>
       </div>
 
       <form className={styles.formCard} onSubmit={handleAdd}>
@@ -95,27 +142,57 @@ const Vocab = () => {
           name="sentence" 
           value={formData.sentence} 
           onChange={handleInputChange} 
-          placeholder="My Sentence" 
+          placeholder="Example Sentence" 
           className={styles.inputField} 
         />
         <button type="submit" className={styles.addButton}>
-          <Plus size={18} style={{ display: 'inline', verticalAlign: 'text-bottom' }} /> Tambah Kosakata
+          <Plus size={18} /> Add Word
         </button>
       </form>
 
       <div className={styles.vocabGrid}>
-        {vocabs.map((vocab) => (
+        {filteredVocabs.length === 0 && (
+          <div className={styles.emptyState}>No vocabulary found.</div>
+        )}
+        
+        {filteredVocabs.map((vocab) => (
           <div key={vocab.id} className={`${styles.vocabItem} hover-scale`}>
-            <button className={styles.deleteBtn} onClick={() => handleDelete(vocab.id)}>
-              <X size={18} />
-            </button>
-            <div className={styles.wordHeader}>
-              <span className={styles.word}>{vocab.word}</span>
-              {vocab.ipa && <span className={styles.ipa}>{vocab.ipa}</span>}
+            <div className={styles.cardActions}>
+              {editingId === vocab.id ? (
+                <button className={styles.actionBtn} onClick={saveEditing} title="Save changes">
+                  <Check size={18} color="#10b981" />
+                </button>
+              ) : (
+                <button className={styles.actionBtn} onClick={() => startEditing(vocab)} title="Edit">
+                  <Edit2 size={16} />
+                </button>
+              )}
+              <button className={`${styles.actionBtn} ${styles.deleteHover}`} onClick={() => handleDelete(vocab.id, vocab.word)} title="Delete">
+                <X size={18} />
+              </button>
             </div>
-            <div className={styles.definition}>{vocab.definition}</div>
-            {vocab.synonym && <div className={styles.synonym}>Syn: {vocab.synonym}</div>}
-            {vocab.sentence && <div className={styles.sentence}>"{vocab.sentence}"</div>}
+            
+            {editingId === vocab.id ? (
+              // Edit Mode
+              <>
+                <input name="word" value={editFormData.word} onChange={handleEditChange} className={styles.editInput} placeholder="Word" />
+                <input name="ipa" value={editFormData.ipa} onChange={handleEditChange} className={styles.editInput} placeholder="IPA" />
+                <input name="definition" value={editFormData.definition} onChange={handleEditChange} className={styles.editInput} placeholder="Definition" />
+                <input name="synonym" value={editFormData.synonym} onChange={handleEditChange} className={styles.editInput} placeholder="Synonyms" />
+                <input name="sentence" value={editFormData.sentence} onChange={handleEditChange} className={styles.editInput} placeholder="Sentence" />
+              </>
+            ) : (
+              // View Mode
+              <>
+                <div className={styles.wordHeader}>
+                  <span className={styles.word}>{vocab.word}</span>
+                  {vocab.ipa && <span className={styles.ipa}>{vocab.ipa}</span>}
+                </div>
+                <div className={styles.definition}>{vocab.definition}</div>
+                {vocab.synonym && <div className={styles.synonym}>Syn: {vocab.synonym}</div>}
+                {vocab.sentence && <div className={styles.sentence}>"{vocab.sentence}"</div>}
+              </>
+            )}
           </div>
         ))}
       </div>

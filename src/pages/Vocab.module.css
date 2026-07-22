@@ -5,6 +5,9 @@
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 1rem;
 }
 
@@ -15,6 +18,28 @@
 
 .subtitle {
   color: var(--color-text-muted);
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.searchBar {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(130, 177, 255, 0.4);
+  border-radius: var(--radius-md);
+  background: white;
+  width: 250px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.searchBar:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(130, 177, 255, 0.2);
 }
 
 .formCard {
@@ -57,6 +82,9 @@
   align-self: flex-end;
   transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(68, 138, 255, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .addButton:hover {
@@ -77,13 +105,15 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .wordHeader {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 0.5rem;
 }
 
 .word {
@@ -101,13 +131,11 @@
 
 .definition {
   font-weight: 500;
-  margin-bottom: 0.5rem;
 }
 
 .synonym {
   font-size: 0.85rem;
-  color: #64748b;
-  margin-bottom: 1rem;
+  color: var(--color-text-muted);
 }
 
 .sentence {
@@ -116,16 +144,57 @@
   border-left: 3px solid var(--color-primary-light);
   color: #334155;
   font-size: 0.95rem;
+  margin-top: 0.5rem;
 }
 
-.deleteBtn {
+.cardActions {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  color: #cbd5e1;
-  transition: color 0.2s;
+  display: flex;
+  gap: 0.5rem;
 }
 
-.deleteBtn:hover {
+.actionBtn {
+  color: #cbd5e1;
+  transition: color 0.2s;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.actionBtn:hover {
+  color: var(--color-primary-dark);
+}
+
+.actionBtn.deleteHover:hover {
   color: #ef4444;
+}
+
+.editInput {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: inherit;
+  margin-bottom: 0.25rem;
+}
+
+.saveEditBtn {
+  background: var(--color-primary-dark);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  align-self: flex-start;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-muted);
 }

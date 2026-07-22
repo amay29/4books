@@ -5,6 +5,9 @@
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 1rem;
 }
 
@@ -15,6 +18,28 @@
 
 .subtitle {
   color: var(--color-text-muted);
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.searchBar {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(130, 177, 255, 0.4);
+  border-radius: var(--radius-md);
+  background: white;
+  width: 250px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.searchBar:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(130, 177, 255, 0.2);
 }
 
 .formCard {
@@ -54,6 +79,9 @@
   align-self: flex-end;
   transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(68, 138, 255, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .addButton:hover {
@@ -127,10 +155,15 @@
   color: #cbd5e1;
 }
 
-.deleteBtn {
+.cardActions {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionBtn {
   color: #cbd5e1;
   transition: color 0.2s;
   background: white;
@@ -138,6 +171,39 @@
   padding: 4px;
 }
 
-.deleteBtn:hover {
+.actionBtn:hover {
+  color: var(--color-primary-dark);
+}
+
+.actionBtn.deleteHover:hover {
   color: #ef4444;
+}
+
+.editTextarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.5rem;
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: inherit;
+  resize: vertical;
+}
+
+.saveEditBtn {
+  grid-column: 1 / -1;
+  background: var(--color-primary-dark);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  justify-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-muted);
 }

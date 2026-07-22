@@ -5,6 +5,8 @@ import Vocab from './pages/Vocab';
 import Ielts from './pages/IeltsPractice';
 import ErrorLog from './pages/ErrorLog';
 
+import Settings from './pages/Settings';
+
 function App() {
   const [activeTab, setActiveTab] = useState('journal');
 
@@ -18,6 +20,8 @@ function App() {
         return <Ielts />;
       case 'error':
         return <ErrorLog />;
+      case 'settings':
+        return <Settings />;
       default:
         return <Journal />;
     }
